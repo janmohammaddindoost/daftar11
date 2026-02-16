@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دفتر کارگران برجی زمین محمد نور اطلاع</title>
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.0.0/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <style>
+        :root {
+            --bg-camel: #96693d;
+            --box-bg: #fdfaf6;
+            --primary: #2e7d32;
+            --danger: #d32f2f;
+            --text-main: #212121;
+            --number-color: #e64a19;
+            --amount-color: #1976d2;
+            --date-color: #00796b;
+        }
+
+        body {
+            background-color: var(--bg-camel);
+            font-family: 'Vazirmatn', Tahoma, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: var(--text-main);
+            background-image: linear-gradient(135deg, #a67c52 0%, #7a502a 100%);
+            min-height: 100vh;
+        }
+
+        .page { display: none; padding: 15px; animation: fadeIn 0.4s ease-in-out; }
+        .active-page { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        .container {
+            background: var(--box-bg);
+            border-radius: 20px;
+            padding: 25px 20px;
+            max-width: 500px;
+            margin: 20px auto;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+            border: 5px solid #d4a373;
+        }
+
+        h1 { text-align: center; color: #3e2723; font-size: 1.5rem; margin-bottom: 8px; }
+        
+        h2.subtitle {
+            text-align: center;
+            color: var(--danger);
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+            border-bottom: 2px dashed #d7ccc8;
+            padding-bottom: 15px;
+        }
+
+        .eng-num { font-family: Arial, sans-serif; direction: ltr; display: inline-block; }
+
+        h3.worker-title {
+            text-align: center;
+            font-size: 1.3rem;
+            color: #4e342e;
+            background: #ffe0b2;
+            padding: 12px;
+            border-radius: 12px;
+            border: 2px solid #ffcc80;
+        }
+
+        .btn {
+            display: block; width: 100%; padding: 14px; border: none; border-radius: 12px;
+            font-size: 1.2rem; font-family: inherit; cursor: pointer; transition: all 0.2s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2); font-weight: bold;
+        }
+
+        .btn-enter { background-color: var(--primary); color: white; margin-top: 20px; }
+        .btn-save { background-color: #0288d1; color: white; margin-top: 20px; }
+        .btn-back { background-color: #757575; color: white; margin-top: 12px; }
+        .btn-date { background-color: #f57c00; color: white; padding: 8px 12px; font-size: 0.9rem; width: auto; display: inline-block; margin-right: 10px; border-radius: 8px;}
+
+        .worker-list { list-style: none; padding: 0; }
+        .worker-list li {
+            background: #fff8e1; margin-bottom: 12px; padding: 15px; border-radius: 12px;
+            cursor: pointer; border: 1px solid #ffe082; display: flex; align-items: center;
+            font-size: 1.2rem; font-weight: bold;
+        }
+
+        .worker-list .w-num {
+            background: var(--number-color); color: white; width: 35px; height: 35px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            margin-left: 15px; font-family: Arial;
+        }
+
+        .worker-details { list-style: none; padding: 0; }
+        .worker-details li {
+            padding: 15px 0; border-bottom: 1px solid #e0e0e0; font-size: 1.1rem;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+
+        .d-num { color: var(--number-color); font-weight: bold; font-family: Arial; margin-left: 5px; }
+        .val-text { font-weight: bold; font-family: Arial; direction: ltr; }
+        .val-money { color: var(--amount-color); }
+        .val-date { color: var(--date-color); }
+        
+        /* استایل‌های جدید برای ردیف‌های ۸ و ۹ */
+        .val-total-deductions { color: #d32f2f; background: #ffcdd2; padding: 5px 10px; border-radius: 8px; }
+        .status-badge { padding: 5px 12px; border-radius: 8px; display: inline-block; font-family: 'Vazirmatn', Tahoma; font-weight: bold; }
+
+        input[type="text"] {
+            font-family: Arial; padding: 10px; border: 2px solid #bcaaa4; border-radius: 8px;
+            width: 140px; text-align: left; direction: ltr; font-size: 1.1rem;
+            color: var(--amount-color); font-weight: bold; background: #fafafa;
+        }
+
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 1000;
+        }
+        .modal-content {
+            background: white; padding: 25px; border-radius: 15px; width: 90%; max-width: 350px; text-align: center;
+        }
+        .modal-content select {
+            padding: 10px; font-family: Arial; font-size: 1rem; margin: 5px; border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="page1" class="page active-page">
+        <div class="container">
+            <h1>دفتر کارگران برجی زمین محمد نور اطلاع</h1>
+            <h2 class="subtitle">نرخ هر برجی مبلغ: <span class="eng-num">30,000,000</span> تومان تمام</h2>
+            <button class="btn btn-enter" onclick="goToPage('page2')">ورود به دفتر 🚪</button>
+        </div>
+    </div>
+
+    <div id="page2" class="page">
+        <div class="container">
+            <h1>لیست اسامی کارگران</h1>
+            <ul class="worker-list" id="workerListEl"></ul>
+            <button class="btn btn-back" onclick="goToPage('page1')">برگشت</button>
+        </div>
+    </div>
+
+    <div id="page3" class="page">
+        <div class="container" id="capture-area">
+            <h3 class="worker-title" id="lblWorkerName">اسم کارگر</h3>
+            <ul class="worker-details">
+                <li><span><span class="d-num">1-</span> تاریخ شروع کار:</span> <span class="val-text val-date" id="lblStartDate"></span></li>
+                <li><span><span class="d-num">2-</span> مبلغ کل کارکرد:</span> <span class="val-text val-money"><span id="lblTotalEarned">0</span> تومان</span></li>
+                <li><span><span class="d-num">3-</span> تعداد روز کار:</span> <span class="val-text val-date" id="lblTotalDays">0 برج و 0 روز</span></li>
+                <li>
+                    <span><span class="d-num">4-</span> تاریخ پایان کار:</span> 
+                    <div style="display:flex; align-items:center;">
+                        <button class="btn btn-date" onclick="openDateModal()" data-html2canvas-ignore>📅 تقویم</button>
+                        <span class="val-text val-date" id="lblEndDate">انتخاب نشده</span>
+                    </div>
+                </li>
+                <li><span><span class="d-num">5-</span> برداشت خوراکه:</span> <input type="text" id="inpFood" value="0" oninput="formatInput(this)"></li>
+                <li><span><span class="d-num">6-</span> برداشتی دستی:</span> <input type="text" id="inpManual" value="0" oninput="formatInput(this)"></li>
+                <li><span><span class="d-num">7-</span> برداشت پول نقد:</span> <input type="text" id="inpCash" value="0" oninput="formatInput(this)"></li>
+                <li><span><span class="d-num">8-</span> جمع برداشت‌ها:</span> <span class="val-text val-total-deductions" id="lblTotalDeductions">0 تومان</span></li>
+                <li><span><span class="d-num">9-</span> وضعیت نهایی:</span> <span class="status-badge" id="lblFinalStatus">طلب و بدهی مشخص نیست</span></li>
+            </ul>
+        </div>
+        <div class="container" style="padding: 15px; margin-top: 10px;" data-html2canvas-ignore>
+            <button class="btn btn-save" onclick="saveToImage()">ثبت و ذخیره عکس 📸</button>
+            <button class="btn btn-back" onclick="goToPage('page2')">برگشت به لیست</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="dateModal">
+        <div class="modal-content">
+            <h3 style="margin-top:0;">انتخاب تاریخ پایان</h3>
+            <div style="display: flex; justify-content: center; direction: ltr;">
+                <select id="selYear"><option value="1404">1404</option><option value="1405">1405</option></select>
+                <select id="selMonth" onchange="updateDaysDropdown()"></select>
+                <select id="selDay"></select>
+            </div>
+            <button class="btn btn-enter" onclick="confirmDate()">تایید تاریخ ✔️</button>
+            <button class="btn btn-back" onclick="closeDateModal()">انصراف</button>
+        </div>
+    </div>
+
+    <script>
+        const workers = [
+            { id: 1, name: "عبدالفتاح", startM: 6, startD: 1 },
+            { id: 2, name: "حبیب الله", startM: 6, startD: 5 },
+            { id: 3, name: "عبدالبقاء", startM: 6, startD: 13 },
+            { id: 4, name: "عبدالحمید", startM: 6, startD: 21 },
+            { id: 5, name: "نثاراحمد", startM: 9, startD: 13 },
+            { id: 6, name: "بازمحمد", startM: 10, startD: 1 },
+            { id: 7, name: "نورالله", startM: 10, startD: 1 },
+            { id: 8, name: "تاج محمد", startM: 10, startD: 1 },
+            { id: 9, name: "شفیع", startM: 10, startD: 1 }
+        ];
+
+        let activeWorker = null;
+        const MONTH_RATE = 30000000;
+        const DAY_RATE = 1000000;
+
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playSound() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine'; osc.frequency.setValueAtTime(500, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+        }
+
+        function goToPage(pageId) {
+            playSound();
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
+            document.getElementById(pageId).classList.add('active-page');
+            if(pageId === 'page2') renderWorkerList();
+        }
+
+        function renderWorkerList() {
+            const list = document.getElementById('workerListEl');
+            list.innerHTML = '';
+            workers.forEach((w, i) => {
+                const li = document.createElement('li');
+                li.innerHTML = `<span class="w-num">${i + 1}</span> ${w.name}`;
+                li.onclick = () => openWorkerPage(w);
+                list.appendChild(li);
+            });
+        }
+
+        function openWorkerPage(worker) {
+            activeWorker = worker;
+            document.getElementById('lblWorkerName').innerText = `حساب شخصی: ${worker.name}`;
+            document.getElementById('lblStartDate').innerText = `1404 / ${worker.startM} / ${worker.startD}`;
+            document.getElementById('lblTotalEarned').innerText = '0';
+            document.getElementById('lblTotalEarned').dataset.value = '0';
+            document.getElementById('lblTotalDays').innerText = '0 برج و 0 روز';
+            document.getElementById('lblEndDate').innerText = 'انتخاب نشده';
+            document.getElementById('inpFood').value = '0';
+            document.getElementById('inpManual').value = '0';
+            document.getElementById('inpCash').value = '0';
+            
+            // ریست کردن فیلدهای جدید
+            document.getElementById('lblTotalDeductions').innerText = '0 تومان';
+            
+            const statusBadge = document.getElementById('lblFinalStatus');
+            statusBadge.innerText = 'طلب و بدهی مشخص نیست';
+            statusBadge.style.backgroundColor = 'transparent';
+            statusBadge.style.color = '#757575';
+            statusBadge.style.border = '1px solid #e0e0e0';
+
+            goToPage('page3');
+        }
+
+        window.onload = () => {
+            const m = document.getElementById('selMonth');
+            for(let i=1; i<=12; i++) m.innerHTML += `<option value="${i}">برج ${i}</option>`;
+            updateDaysDropdown();
+        };
+
+        function updateDaysDropdown() {
+            const m = parseInt(document.getElementById('selMonth').value || 1);
+            const d = document.getElementById('selDay');
+            let max = (m <= 6) ? 31 : 30;
+            let current = d.value; d.innerHTML = '';
+            for(let i=1; i<=max; i++) d.innerHTML += `<option value="${i}">روز ${i}</option>`;
+            if(current && current <= max) d.value = current;
+        }
+
+        function openDateModal() { playSound(); document.getElementById('dateModal').style.display = 'flex'; }
+        function closeDateModal() { playSound(); document.getElementById('dateModal').style.display = 'none'; }
+
+        function getDays(m, d) {
+            let total = 0;
+            for(let i=1; i<m; i++) total += (i <= 6 ? 31 : 30);
+            return total + d;
+        }
+
+        function confirmDate() {
+            playSound();
+            const y2 = parseInt(document.getElementById('selYear').value);
+            const m2 = parseInt(document.getElementById('selMonth').value);
+            const d2 = parseInt(document.getElementById('selDay').value);
+            const d1_total = getDays(activeWorker.startM, activeWorker.startD);
+            const d2_total = getDays(m2, d2) + ((y2 - 1404) * 365);
+            const diff = d2_total - d1_total;
+            if(diff < 0) { alert("تاریخ اشتباه است!"); return; }
+
+            document.getElementById('lblEndDate').innerText = `${y2} / ${m2} / ${d2}`;
+            closeDateModal();
+
+            const months = Math.floor(diff / 30);
+            const days = diff % 30;
+            document.getElementById('lblTotalDays').innerText = `${months} برج و ${days} روز`;
+
+            // محاسبه کل کارکرد بر اساس تاریخ
+            const earned = (months * MONTH_RATE) + (days * DAY_RATE);
+            document.getElementById('lblTotalEarned').dataset.value = earned;
+            document.getElementById('lblTotalEarned').innerText = earned.toLocaleString('en-US');
+            
+            // فراخوانی آپدیت بدهی و طلب
+            calculateBalance();
+        }
+
+        function formatInput(input) {
+            let val = input.value.replace(/,/g, '').replace(/[^0-9]/g, '');
+            let num = parseFloat(val) || 0;
+            input.value = num.toLocaleString('en-US');
+            calculateBalance();
+        }
+
+        function calculateBalance() {
+            // دریافت مبلغ کارکرد (که فقط توسط تاریخ مشخص میشود و اینجا تغییر نمیکند)
+            const earned = parseFloat(document.getElementById('lblTotalEarned').dataset.value || 0);
+            
+            // دریافت مبالغ برداشت شده
+            const f = parseFloat(document.getElementById('inpFood').value.replace(/,/g, '')) || 0;
+            const m = parseFloat(document.getElementById('inpManual').value.replace(/,/g, '')) || 0;
+            const c = parseFloat(document.getElementById('inpCash').value.replace(/,/g, '')) || 0;
+            
+            // محاسبه جمع کل برداشت ها
+            const totalDeductions = f + m + c;
+            document.getElementById('lblTotalDeductions').innerText = totalDeductions.toLocaleString('en-US') + ' تومان';
+
+            // محاسبه وضعیت نهایی
+            const netBalance = earned - totalDeductions;
+            const statusBadge = document.getElementById('lblFinalStatus');
+            
+            // استایل دهی بر اساس طلب یا بدهی
+            statusBadge.style.border = 'none';
+
+            if (earned === 0 && totalDeductions === 0) {
+                statusBadge.innerText = 'طلب و بدهی مشخص نیست';
+                statusBadge.style.backgroundColor = 'transparent';
+                statusBadge.style.color = '#757575';
+                statusBadge.style.border = '1px solid #e0e0e0';
+            } else if (netBalance > 0) {
+                // کارگر طلبکار است (سبز)
+                statusBadge.innerHTML = `طلب: <span style="font-family:Arial;" dir="ltr">${netBalance.toLocaleString('en-US')}</span> تومان`;
+                statusBadge.style.backgroundColor = '#e8f5e9';
+                statusBadge.style.color = '#2e7d32'; // سبز تیره
+            } else if (netBalance < 0) {
+                // کارگر بدهکار است (قرمز)
+                statusBadge.innerHTML = `بدهکار: <span style="font-family:Arial;" dir="ltr">${Math.abs(netBalance).toLocaleString('en-US')}</span> تومان`;
+                statusBadge.style.backgroundColor = '#ffebee';
+                statusBadge.style.color = '#c62828'; // قرمز تیره
+            } else {
+                // تصفیه شده (صفر)
+                statusBadge.innerText = 'تصفیه کامل (صفر)';
+                statusBadge.style.backgroundColor = '#fff8e1';
+                statusBadge.style.color = '#f57f17'; // زرد/نارنجی
+            }
+        }
+
+        function saveToImage() {
+            playSound();
+            const area = document.getElementById('capture-area');
+            const inputs = area.querySelectorAll('input');
+            const spans = [];
+            
+            inputs.forEach(input => {
+                const s = document.createElement('span');
+                s.className = 'val-text val-money temp-s';
+                s.innerText = input.value + " تومان";
+                input.style.display = 'none';
+                input.parentNode.insertBefore(s, input);
+                spans.push(s);
+            });
+
+            html2canvas(area, { scale: 2, backgroundColor: "#fdfaf6" }).then(canvas => {
+                let link = document.createElement('a');
+                link.download = `حساب_${activeWorker.name}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                spans.forEach(s => s.remove());
+                inputs.forEach(i => i.style.display = 'inline-block');
+            });
+        }
+    </script>
+</body>
+</html>
