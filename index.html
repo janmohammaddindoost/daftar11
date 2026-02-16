@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>دفتر کارگران برجی زمین محمد نور اطلاع</title>
+    <title>دفتر کارگران - طراحی جان محمد دین دوست</title>
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.0.0/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
@@ -41,6 +41,7 @@
             margin: 20px auto;
             box-shadow: 0 15px 40px rgba(0,0,0,0.5);
             border: 5px solid #d4a373;
+            position: relative;
         }
 
         h1 { text-align: center; color: #3e2723; font-size: 1.5rem; margin-bottom: 8px; }
@@ -100,16 +101,58 @@
         .val-text { font-weight: bold; font-family: Arial; direction: ltr; }
         .val-money { color: var(--amount-color); }
         .val-date { color: var(--date-color); }
-        
-        /* استایل‌های جدید برای ردیف‌های ۸ و ۹ */
         .val-total-deductions { color: #d32f2f; background: #ffcdd2; padding: 5px 10px; border-radius: 8px; }
         .status-badge { padding: 5px 12px; border-radius: 8px; display: inline-block; font-family: 'Vazirmatn', Tahoma; font-weight: bold; }
 
-        /* ----------- استایل‌های جدید برای رنگی کردن برج و روز ----------- */
-        .badge-num { color: #d32f2f; font-weight: bold; font-family: Arial; font-size: 1.3rem; margin: 0 3px; }
-        .badge-month-text { color: #00796b; font-weight: bold; }
-        .badge-day-text { color: #1976d2; font-weight: bold; }
+        /* ----------- استایل‌های جدید برای جدول‌های کوچک (Badges) ----------- */
+        .badge-box {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2px 8px;
+            border-radius: 6px;
+            color: white;
+            font-weight: bold;
+            font-family: Arial, sans-serif;
+            font-size: 1.2rem;
+            min-width: 30px;
+            box-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            margin: 0 4px;
+        }
+        
+        .badge-day { background-color: #ef6c00; border: 2px solid #e65100; } /* نارنجی پررنگ برای روز */
+        .badge-month { background-color: #2e7d32; border: 2px solid #1b5e20; } /* سبز برای برج */
+
+        .badge-text { font-size: 0.9rem; color: #424242; font-weight: bold; }
         /* ----------------------------------------------------------------- */
+
+        /* استایل فوتر (طراح) */
+        .footer-credit {
+            margin-top: 30px;
+            padding-top: 15px;
+            border-top: 2px dashed #bcaaa4;
+            text-align: center;
+            font-size: 0.95rem;
+            color: #5d4037;
+            background-color: #efebe9;
+            border-radius: 10px;
+            padding-bottom: 10px;
+        }
+        .footer-credit .designer-name {
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: #3e2723;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .footer-credit .date-display {
+            font-family: 'Vazirmatn', sans-serif;
+            color: #00695c;
+            background: #e0f2f1;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+        }
 
         input[type="text"] {
             font-family: Arial; padding: 10px; border: 2px solid #bcaaa4; border-radius: 8px;
@@ -136,6 +179,12 @@
             <h1>دفتر کارگران برجی زمین محمد نور اطلاع</h1>
             <h2 class="subtitle">نرخ هر برجی مبلغ: <span class="eng-num">30,000,000</span> تومان تمام</h2>
             <button class="btn btn-enter" onclick="goToPage('page2')">ورود به دفتر 🚪</button>
+
+            <div class="footer-credit">
+                <span>طراحی کننده این سایت:</span>
+                <span class="designer-name">جان محمد دین دوست</span>
+                <span id="currentDateDisplay" class="date-display">...</span>
+            </div>
         </div>
     </div>
 
@@ -153,7 +202,16 @@
             <ul class="worker-details">
                 <li><span><span class="d-num">1-</span> تاریخ شروع کار:</span> <span class="val-text val-date" id="lblStartDate"></span></li>
                 <li><span><span class="d-num">2-</span> مبلغ کل کارکرد:</span> <span class="val-text val-money"><span id="lblTotalEarned">0</span> تومان</span></li>
-                <li><span><span class="d-num">3-</span> تعداد روز کار:</span> <span class="val-text val-date" id="lblTotalDays"><span class="badge-num">0</span> <span class="badge-month-text">برج</span> و <span class="badge-num">0</span> <span class="badge-day-text">روز</span></span></li>
+                
+                <li>
+                    <span><span class="d-num">3-</span> مدت کار:</span> 
+                    <span id="lblTotalDays" style="display: flex; align-items: center;">
+                        <span class="badge-box badge-day">0</span> <span class="badge-text">روز</span>
+                        <span style="margin:0 5px">و</span>
+                        <span class="badge-box badge-month">0</span> <span class="badge-text">برج</span>
+                    </span>
+                </li>
+
                 <li>
                     <span><span class="d-num">4-</span> تاریخ پایان کار:</span> 
                     <div style="display:flex; align-items:center;">
@@ -240,8 +298,12 @@
             document.getElementById('lblTotalEarned').innerText = '0';
             document.getElementById('lblTotalEarned').dataset.value = '0';
             
-            // بازنشانی نمایش رنگی تعداد روز کار
-            document.getElementById('lblTotalDays').innerHTML = '<span class="badge-num">0</span> <span class="badge-month-text">برج</span> و <span class="badge-num">0</span> <span class="badge-day-text">روز</span>';
+            // بازنشانی نمایش به حالت پیش‌فرض (اول روز، بعد برج)
+            document.getElementById('lblTotalDays').innerHTML = `
+                <span class="badge-box badge-day">0</span> <span class="badge-text">روز</span>
+                <span style="margin:0 5px">و</span>
+                <span class="badge-box badge-month">0</span> <span class="badge-text">برج</span>
+            `;
             
             document.getElementById('lblEndDate').innerText = 'انتخاب نشده';
             document.getElementById('inpFood').value = '0';
@@ -259,7 +321,17 @@
             goToPage('page3');
         }
 
+        // تابع دریافت تاریخ شمسی امروز
+        function getPersianDate() {
+            const now = new Date();
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return now.toLocaleDateString('fa-IR', options);
+        }
+
         window.onload = () => {
+            // تنظیم تاریخ روز در فوتر
+            document.getElementById('currentDateDisplay').innerText = "تاریخ امروز: " + getPersianDate();
+
             const m = document.getElementById('selMonth');
             for(let i=1; i<=12; i++) m.innerHTML += `<option value="${i}">برج ${i}</option>`;
             updateDaysDropdown();
@@ -291,8 +363,6 @@
             const d1_total = getDays(activeWorker.startM, activeWorker.startD);
             const d2_total = getDays(m2, d2) + ((y2 - 1404) * 365);
             
-            // --- تغییر مهم برای محاسبه دقیق و حل مشکل کم شدن یک روز ---
-            // اضافه کردن 1+ باعث می‌شود روز شروع و پایان هر دو شمرده شوند
             const diff = (d2_total - d1_total) + 1; 
             
             if(diff <= 0) { alert("تاریخ پایان نباید قبل از تاریخ شروع باشد!"); return; }
@@ -303,8 +373,12 @@
             const months = Math.floor(diff / 30);
             const days = diff % 30;
             
-            // --- تغییر برای رنگ‌بندی تفکیک شده اعداد و متن برج و روز ---
-            document.getElementById('lblTotalDays').innerHTML = `<span class="badge-num">${months}</span> <span class="badge-month-text">برج</span> و <span class="badge-num">${days}</span> <span class="badge-day-text">روز</span>`;
+            // --- تغییر اصلی: اول روز (نارنجی) بعد برج (سبز) در جدول‌های رنگی ---
+            document.getElementById('lblTotalDays').innerHTML = `
+                <span class="badge-box badge-day">${days}</span> <span class="badge-text">روز</span>
+                <span style="margin:0 5px">و</span>
+                <span class="badge-box badge-month">${months}</span> <span class="badge-text">برج</span>
+            `;
 
             // محاسبه کل کارکرد بر اساس تاریخ
             const earned = (months * MONTH_RATE) + (days * DAY_RATE);
