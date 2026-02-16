@@ -105,6 +105,12 @@
         .val-total-deductions { color: #d32f2f; background: #ffcdd2; padding: 5px 10px; border-radius: 8px; }
         .status-badge { padding: 5px 12px; border-radius: 8px; display: inline-block; font-family: 'Vazirmatn', Tahoma; font-weight: bold; }
 
+        /* ----------- استایل‌های جدید برای رنگی کردن برج و روز ----------- */
+        .badge-num { color: #d32f2f; font-weight: bold; font-family: Arial; font-size: 1.3rem; margin: 0 3px; }
+        .badge-month-text { color: #00796b; font-weight: bold; }
+        .badge-day-text { color: #1976d2; font-weight: bold; }
+        /* ----------------------------------------------------------------- */
+
         input[type="text"] {
             font-family: Arial; padding: 10px; border: 2px solid #bcaaa4; border-radius: 8px;
             width: 140px; text-align: left; direction: ltr; font-size: 1.1rem;
@@ -147,7 +153,7 @@
             <ul class="worker-details">
                 <li><span><span class="d-num">1-</span> تاریخ شروع کار:</span> <span class="val-text val-date" id="lblStartDate"></span></li>
                 <li><span><span class="d-num">2-</span> مبلغ کل کارکرد:</span> <span class="val-text val-money"><span id="lblTotalEarned">0</span> تومان</span></li>
-                <li><span><span class="d-num">3-</span> تعداد روز کار:</span> <span class="val-text val-date" id="lblTotalDays">0 برج و 0 روز</span></li>
+                <li><span><span class="d-num">3-</span> تعداد روز کار:</span> <span class="val-text val-date" id="lblTotalDays"><span class="badge-num">0</span> <span class="badge-month-text">برج</span> و <span class="badge-num">0</span> <span class="badge-day-text">روز</span></span></li>
                 <li>
                     <span><span class="d-num">4-</span> تاریخ پایان کار:</span> 
                     <div style="display:flex; align-items:center;">
@@ -233,13 +239,15 @@
             document.getElementById('lblStartDate').innerText = `1404 / ${worker.startM} / ${worker.startD}`;
             document.getElementById('lblTotalEarned').innerText = '0';
             document.getElementById('lblTotalEarned').dataset.value = '0';
-            document.getElementById('lblTotalDays').innerText = '0 برج و 0 روز';
+            
+            // بازنشانی نمایش رنگی تعداد روز کار
+            document.getElementById('lblTotalDays').innerHTML = '<span class="badge-num">0</span> <span class="badge-month-text">برج</span> و <span class="badge-num">0</span> <span class="badge-day-text">روز</span>';
+            
             document.getElementById('lblEndDate').innerText = 'انتخاب نشده';
             document.getElementById('inpFood').value = '0';
             document.getElementById('inpManual').value = '0';
             document.getElementById('inpCash').value = '0';
             
-            // ریست کردن فیلدهای جدید
             document.getElementById('lblTotalDeductions').innerText = '0 تومان';
             
             const statusBadge = document.getElementById('lblFinalStatus');
@@ -282,15 +290,21 @@
             const d2 = parseInt(document.getElementById('selDay').value);
             const d1_total = getDays(activeWorker.startM, activeWorker.startD);
             const d2_total = getDays(m2, d2) + ((y2 - 1404) * 365);
-            const diff = d2_total - d1_total;
-            if(diff < 0) { alert("تاریخ اشتباه است!"); return; }
+            
+            // --- تغییر مهم برای محاسبه دقیق و حل مشکل کم شدن یک روز ---
+            // اضافه کردن 1+ باعث می‌شود روز شروع و پایان هر دو شمرده شوند
+            const diff = (d2_total - d1_total) + 1; 
+            
+            if(diff <= 0) { alert("تاریخ پایان نباید قبل از تاریخ شروع باشد!"); return; }
 
             document.getElementById('lblEndDate').innerText = `${y2} / ${m2} / ${d2}`;
             closeDateModal();
 
             const months = Math.floor(diff / 30);
             const days = diff % 30;
-            document.getElementById('lblTotalDays').innerText = `${months} برج و ${days} روز`;
+            
+            // --- تغییر برای رنگ‌بندی تفکیک شده اعداد و متن برج و روز ---
+            document.getElementById('lblTotalDays').innerHTML = `<span class="badge-num">${months}</span> <span class="badge-month-text">برج</span> و <span class="badge-num">${days}</span> <span class="badge-day-text">روز</span>`;
 
             // محاسبه کل کارکرد بر اساس تاریخ
             const earned = (months * MONTH_RATE) + (days * DAY_RATE);
@@ -309,23 +323,16 @@
         }
 
         function calculateBalance() {
-            // دریافت مبلغ کارکرد (که فقط توسط تاریخ مشخص میشود و اینجا تغییر نمیکند)
             const earned = parseFloat(document.getElementById('lblTotalEarned').dataset.value || 0);
-            
-            // دریافت مبالغ برداشت شده
             const f = parseFloat(document.getElementById('inpFood').value.replace(/,/g, '')) || 0;
             const m = parseFloat(document.getElementById('inpManual').value.replace(/,/g, '')) || 0;
             const c = parseFloat(document.getElementById('inpCash').value.replace(/,/g, '')) || 0;
             
-            // محاسبه جمع کل برداشت ها
             const totalDeductions = f + m + c;
             document.getElementById('lblTotalDeductions').innerText = totalDeductions.toLocaleString('en-US') + ' تومان';
 
-            // محاسبه وضعیت نهایی
             const netBalance = earned - totalDeductions;
             const statusBadge = document.getElementById('lblFinalStatus');
-            
-            // استایل دهی بر اساس طلب یا بدهی
             statusBadge.style.border = 'none';
 
             if (earned === 0 && totalDeductions === 0) {
@@ -334,20 +341,17 @@
                 statusBadge.style.color = '#757575';
                 statusBadge.style.border = '1px solid #e0e0e0';
             } else if (netBalance > 0) {
-                // کارگر طلبکار است (سبز)
                 statusBadge.innerHTML = `طلب: <span style="font-family:Arial;" dir="ltr">${netBalance.toLocaleString('en-US')}</span> تومان`;
                 statusBadge.style.backgroundColor = '#e8f5e9';
-                statusBadge.style.color = '#2e7d32'; // سبز تیره
+                statusBadge.style.color = '#2e7d32'; 
             } else if (netBalance < 0) {
-                // کارگر بدهکار است (قرمز)
                 statusBadge.innerHTML = `بدهکار: <span style="font-family:Arial;" dir="ltr">${Math.abs(netBalance).toLocaleString('en-US')}</span> تومان`;
                 statusBadge.style.backgroundColor = '#ffebee';
-                statusBadge.style.color = '#c62828'; // قرمز تیره
+                statusBadge.style.color = '#c62828'; 
             } else {
-                // تصفیه شده (صفر)
                 statusBadge.innerText = 'تصفیه کامل (صفر)';
                 statusBadge.style.backgroundColor = '#fff8e1';
-                statusBadge.style.color = '#f57f17'; // زرد/نارنجی
+                statusBadge.style.color = '#f57f17'; 
             }
         }
 
@@ -378,4 +382,3 @@
     </script>
 </body>
 </html>
-
